@@ -1,7 +1,7 @@
 import React, { useState, createContext } from "react";
 import "./App.css";
 import { Aircrafts } from "./components/Aircrafts";
-import { Flight, Flights } from "./components/Flights";
+import { Flight, Flights, FlightsList } from "./components/Flights";
 import { Rotation } from "./components/Rotation";
 
 declare global {
@@ -23,12 +23,14 @@ const contextDefaultValue = {
 
 const FULL_DAY_IN_MINUTES = 1440;
 const TURNAROUND_IN_MINUTES = 20;
+const DEFAULT_BASE = "EGKK";
+
 type AircraftStatus = "turnaround" | "service" | "idle";
 
 export const AppContext = createContext(contextDefaultValue);
 
 function App() {
-  const [flightsInRotation, setFlightsInRotation] = useState([]);
+  const [flightsInRotation, setFlightsInRotation] = useState<FlightsList>([]);
   // const [rotation, setRotation] = useState([]);
   const [aircraftUsage, setAircraftUsage] = useState<AircraftStatus[]>(
     Array(1440).fill("idle")
@@ -40,7 +42,6 @@ function App() {
     _aircraftUsage: AircraftStatus[]
   ) {
     // console.log({ _aircraftUsage, _departuretime, _arrivaltime });
-    console.log(_aircraftUsage[_departuretime] === undefined);
     if (_departuretime <= _arrivaltime) {
       // console.log("here", _aircraftUsage[_departuretime]);
       if (_aircraftUsage[_departuretime] !== "idle") return true;
@@ -53,6 +54,29 @@ function App() {
   function handleAddFlight(_flight: Flight) {
     const { departuretime, arrivaltime } = _flight;
 
+    // Our default base for our aircraft is "EGKK"
+    if (_flight.origin !== DEFAULT_BASE) {
+      console.log(`Our airplane is at ${DEFAULT_BASE}`);
+      return;
+    }
+
+    /*
+     * The previous selected flight
+     * must have its destination
+     * the same as the origin of
+     * the next flight.
+     */
+    if (flightsInRotation.length > 0) {
+      const currentFlightOrigin = _flight.origin;
+      const previousFlightDestination =
+        flightsInRotation[flightsInRotation.length - 1].destination;
+
+      if (currentFlightOrigin !== previousFlightDestination) {
+        console.log("Oops, can't teleport!");
+        return;
+      }
+    }
+
     // If Airplane is busy, do nothing.
     if (
       isAirplaneBusy(
@@ -61,7 +85,7 @@ function App() {
         aircraftUsage
       )
     ) {
-      console.log("Aircraft is busy");
+      // console.log("Aircraft is busy");
       return;
     }
 
@@ -85,8 +109,6 @@ function App() {
       if (i > arrivaltime.inMinutes()) clonedAircraftUsage[i] = "turnaround";
       else clonedAircraftUsage[i] = "service";
     }
-
-    console.log(clonedAircraftUsage);
 
     // console.log(clonedAircraftUsage);
 

@@ -10,10 +10,10 @@ export interface Flight {
   destination: string;
 }
 
-type Flights = Flight[];
+export type FlightsList = Flight[];
 
 export function Flights({ setRotation }) {
-  const [flights, setFlights] = useState<Flights>(null);
+  const [flights, setFlights] = useState<FlightsList>(null);
 
   useEffect(() => {
     fetch("json/flights.json")
