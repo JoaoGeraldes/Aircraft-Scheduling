@@ -29,6 +29,8 @@ type AircraftStatus = "turnaround" | "service" | "idle";
 
 export const AppContext = createContext(contextDefaultValue);
 
+// https://gist.github.com/nickbnf/77dcd76a26c57fa0d005187b6808799e
+
 function App() {
   const [flightsInRotation, setFlightsInRotation] = useState<FlightsList>([]);
   // const [rotation, setRotation] = useState([]);

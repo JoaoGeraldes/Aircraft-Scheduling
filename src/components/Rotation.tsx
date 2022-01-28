@@ -1,20 +1,21 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { FlightsList } from "./Flights";
 
-interface Flight {
-  ident: string;
-  departuretime: number;
-  arrivaltime: number;
-  readable_departure: string;
-  readable_arrival: string;
-  origin: string;
-  destination: string;
-}
+// interface Flight {
+//   ident: string;
+//   departuretime: number;
+//   arrivaltime: number;
+//   readable_departure: string;
+//   readable_arrival: string;
+//   origin: string;
+//   destination: string;
+// }
 
-type Flights = Flight[];
+// type Flights = Flight[];
 
 interface RotationProps {
-  selectedFlights: Flights;
-  removeFlight: (flights: Flights, index: number) => void;
+  selectedFlights: FlightsList;
+  removeFlight: (flights: FlightsList, index: number) => void;
 }
 export function Rotation({ selectedFlights, removeFlight }: RotationProps) {
   // const [rotation, setRotation] = useState<Flights>(null);
@@ -27,7 +28,7 @@ export function Rotation({ selectedFlights, removeFlight }: RotationProps) {
             {
               arrivaltime,
               destination,
-              ident,
+              id,
               departuretime,
               origin,
               readable_departure,
@@ -37,10 +38,10 @@ export function Rotation({ selectedFlights, removeFlight }: RotationProps) {
             array
           ) => (
             <article
-              key={ident + Math.random()}
+              key={id + Math.random()}
               onClick={() => removeFlight(array, index)}
             >
-              <div className="ident">{ident}</div>
+              <div className="ident">{id}</div>
               <div className="base">
                 <span>{origin}</span>
                 <span>{destination}</span>
