@@ -1,8 +1,9 @@
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useMemo } from "react";
 import "./App.css";
 import { Aircrafts } from "./components/Aircrafts";
 import { Flight, Flights, FlightsList } from "./components/Flights";
 import { Rotation } from "./components/Rotation";
+import { DEFAULT_BASE, TURNAROUND_IN_MINUTES } from "./constants";
 
 declare global {
   // to access the global type Number
@@ -15,19 +16,25 @@ Number.prototype.inMinutes = function() {
   return this / 60;
 };
 
-const contextDefaultValue = {
+interface AppContext {
+  flights?: FlightsList | [];
+  rotation?: FlightsList | [];
+  airplanes?: [];
+}
+
+const contextDefaultValue: AppContext = {
   flights: [],
   rotation: [],
   airplanes: [],
 };
 
-const FULL_DAY_IN_MINUTES = 1440;
-const TURNAROUND_IN_MINUTES = 20;
-const DEFAULT_BASE = "EGKK";
+// const FULL_DAY_IN_MINUTES = 1440;
+// const TURNAROUND_IN_MINUTES = 20;
+// const DEFAULT_BASE = "EGKK";
 
 type AircraftStatus = "turnaround" | "service" | "idle";
 
-export const AppContext = createContext(contextDefaultValue);
+export const AppContext = createContext<AppContext | null>(null);
 
 // https://gist.github.com/nickbnf/77dcd76a26c57fa0d005187b6808799e
 
@@ -57,7 +64,7 @@ function App() {
     const { departuretime, arrivaltime } = _flight;
 
     // Our default base for our aircraft is "EGKK"
-    if (_flight.origin !== DEFAULT_BASE) {
+    if (_flight.origin !== DEFAULT_BASE && flightsInRotation.length < 1) {
       console.log(`Our airplane is at ${DEFAULT_BASE}`);
       return;
     }
@@ -87,17 +94,27 @@ function App() {
         aircraftUsage
       )
     ) {
-      // console.log("Aircraft is busy");
+      console.log("Aircraft is busy");
       return;
     }
 
+    let incompatibleFlightID = null;
     // Sort the flights in rotation by departure time - ascending (top to bottom)
     function compareDeparture(a: Flight, b: Flight) {
+      if (a.destination !== b.origin) incompatibleFlightID = a.id;
       return a.arrivaltime - b.arrivaltime;
     }
-    const sortedFlightsInRotation = [...flightsInRotation, _flight].sort(
-      compareDeparture
-    );
+    const sortedFlightsInRotation = [...flightsInRotation, _flight]
+      .sort(compareDeparture)
+      .filter(
+        (flightInRotation) => flightInRotation.id !== incompatibleFlightID
+      );
+
+    // sortedFlightsInRotation.filter(
+    //   (flightInRotation) => flightInRotation.id !== incompatibleFlightID
+    // );
+    // console.log("incompID", incompatibleFlightID);
+    // console.log("sortedFiltered", sortedFlightsInRotation);
 
     // Set the aircraft usage array with the default set to idle
     // const clonedAircraftUsage = [...aircraftUsage].fill("idle");
@@ -139,15 +156,22 @@ function App() {
     setFlightsInRotation(clonedFlights);
   }
 
+  const memoizedFlightsComponent = useMemo(
+    () => <Flights setRotation={handleAddFlight} />,
+    [handleAddFlight, flightsInRotation]
+  );
   return (
     <div className="content">
-      <AppContext.Provider value={contextDefaultValue}>
+      <AppContext.Provider
+        value={{ ...contextDefaultValue, rotation: flightsInRotation }}
+      >
         <Aircrafts />
         <Rotation
           selectedFlights={flightsInRotation}
           removeFlight={handleRemoveFlight}
         />
-        <Flights setRotation={handleAddFlight} />
+        {/* <Flights setRotation={handleAddFlight} /> */}
+        {memoizedFlightsComponent}
       </AppContext.Provider>
       <footer>
         <div>Footer</div>
