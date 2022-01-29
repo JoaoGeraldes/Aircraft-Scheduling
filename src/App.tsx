@@ -3,7 +3,12 @@ import "./App.css";
 import { Aircrafts } from "./components/Aircrafts";
 import { Flight, Flights, FlightsList } from "./components/Flights";
 import { Rotation } from "./components/Rotation";
-import { DEFAULT_BASE, TURNAROUND_IN_MINUTES } from "./constants";
+import { UsageBar } from "./components/UsageBar";
+import {
+  DEFAULT_BASE,
+  FULL_DAY_IN_MINUTES,
+  TURNAROUND_IN_MINUTES,
+} from "./constants";
 
 declare global {
   // to access the global type Number
@@ -32,7 +37,7 @@ const contextDefaultValue: AppContext = {
 // const TURNAROUND_IN_MINUTES = 20;
 // const DEFAULT_BASE = "EGKK";
 
-type AircraftStatus = "turnaround" | "service" | "idle";
+export type AircraftStatus = "turnaround" | "service" | "idle";
 
 export const AppContext = createContext<AppContext | null>(null);
 
@@ -75,16 +80,16 @@ function App() {
      * the same as the origin of
      * the next flight.
      */
-    if (flightsInRotation.length > 0) {
-      const currentFlightOrigin = _flight.origin;
-      const previousFlightDestination =
-        flightsInRotation[flightsInRotation.length - 1].destination;
-
-      if (currentFlightOrigin !== previousFlightDestination) {
-        console.log("Oops, can't teleport!");
-        return;
-      }
-    }
+    // if (flightsInRotation.length > 1) {
+    //   const currentFlightOrigin = _flight.origin;
+    //   const previousFlightDestination =
+    //     flightsInRotation[flightsInRotation.length - 1].destination;
+    //   console.log("Stoped here!");
+    //   if (currentFlightOrigin !== previousFlightDestination) {
+    //     console.log("Oops, can't teleport!");
+    //     return;
+    //   }
+    // }
 
     // If Airplane is busy, do nothing.
     if (
@@ -101,23 +106,28 @@ function App() {
     let incompatibleFlightID = null;
     // Sort the flights in rotation by departure time - ascending (top to bottom)
     function compareDeparture(a: Flight, b: Flight) {
-      if (a.destination !== b.origin) incompatibleFlightID = a.id;
+      if (a.origin !== b.destination) {
+        console.log("Conflict ID:", a.id);
+        incompatibleFlightID = a.id;
+      }
       return a.arrivaltime - b.arrivaltime;
     }
+
     const sortedFlightsInRotation = [...flightsInRotation, _flight]
       .sort(compareDeparture)
       .filter(
         (flightInRotation) => flightInRotation.id !== incompatibleFlightID
       );
 
-    // sortedFlightsInRotation.filter(
-    //   (flightInRotation) => flightInRotation.id !== incompatibleFlightID
-    // );
-    // console.log("incompID", incompatibleFlightID);
-    // console.log("sortedFiltered", sortedFlightsInRotation);
+    // If a incompatible ID is found, returns, and doesn't add the flight.
+    if (incompatibleFlightID !== null) return;
 
-    // Set the aircraft usage array with the default set to idle
-    // const clonedAircraftUsage = [...aircraftUsage].fill("idle");
+    // If the first flight on the list, after sorted, is different than aircraft base returns.
+    if (sortedFlightsInRotation[0].origin !== DEFAULT_BASE) {
+      console.log("First flight must start on the aircraft base.");
+      return;
+    }
+
     const clonedAircraftUsage = [...aircraftUsage];
 
     for (
@@ -129,9 +139,10 @@ function App() {
       else clonedAircraftUsage[i] = "service";
     }
 
-    // console.log(clonedAircraftUsage);
-
+    console.log("I got to set state!");
+    console.log("conflicted", incompatibleFlightID);
     setAircraftUsage(clonedAircraftUsage);
+
     setFlightsInRotation(sortedFlightsInRotation);
   }
 
@@ -156,25 +167,75 @@ function App() {
     setFlightsInRotation(clonedFlights);
   }
 
+  function getAircraftUsageInPercentage() {
+    let onServiceInMinutes = 0;
+    aircraftUsage.forEach((status) => {
+      if (status === "service") {
+        onServiceInMinutes += 1;
+      }
+    });
+
+    return ((onServiceInMinutes / FULL_DAY_IN_MINUTES) * 100).toFixed(2);
+  }
+
   const memoizedFlightsComponent = useMemo(
     () => <Flights setRotation={handleAddFlight} />,
     [handleAddFlight, flightsInRotation]
   );
+
+  console.log("Flights", flightsInRotation);
   return (
     <div className="content">
       <AppContext.Provider
         value={{ ...contextDefaultValue, rotation: flightsInRotation }}
       >
-        <Aircrafts />
+        <Aircrafts usagePercentage={getAircraftUsageInPercentage()} />
         <Rotation
           selectedFlights={flightsInRotation}
           removeFlight={handleRemoveFlight}
         />
-        {/* <Flights setRotation={handleAddFlight} /> */}
-        {memoizedFlightsComponent}
+        <Flights setRotation={handleAddFlight} />
+        {/* {memoizedFlightsComponent} */}
       </AppContext.Provider>
       <footer>
-        <div>Footer</div>
+        {aircraftUsage && <UsageBar aircraftUsage={aircraftUsage} />}
+        {/* <div className="usage">
+          {aircraftUsage.map((minute) => {
+            if (minute === "idle")
+              return (
+                <div
+                  className="idle"
+                  key={Math.random()}
+                  style={{
+                    width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
+                      100}%`,
+                  }}
+                ></div>
+              );
+            if (minute === "service")
+              return (
+                <div
+                  className="service"
+                  key={Math.random()}
+                  style={{
+                    width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
+                      100}%`,
+                  }}
+                ></div>
+              );
+            if (minute === "turnaround")
+              return (
+                <div
+                  className="turnaround"
+                  key={Math.random()}
+                  style={{
+                    width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
+                      100}%`,
+                  }}
+                ></div>
+              );
+          })}
+        </div> */}
       </footer>
     </div>
   );

@@ -26,6 +26,7 @@ const FLIGHTS_URL = `https://infinite-dawn-93085.herokuapp.com/flights?offset=13
 export function Flights({ setRotation }) {
   const [flights, setFlights] = useState<Data>(null);
   const [offset, setOffset] = useState(1323);
+  // const [offset, setOffset] = useState(73);
   const [sortByOrigin, setSortByOrigin] = useState(null);
   const Context = useContext(AppContext);
 
@@ -33,7 +34,6 @@ export function Flights({ setRotation }) {
   if (Context.rotation.length > 0) {
     lastSelectedFlightDestination =
       Context.rotation[Context.rotation.length - 1].destination || null;
-    console.log("L", lastSelectedFlightDestination);
   }
 
   useEffect(() => {
@@ -71,7 +71,6 @@ export function Flights({ setRotation }) {
     // }
     // return flights.sort(compareDeparture);
     // sort by name
-    console.log(_origin);
     flights.data.sort(function(a, b) {
       var nameA = a.origin.toUpperCase(); // ignore upper and lowercase
       var nameB = b.origin.toUpperCase(); // ignore upper and lowercase
@@ -112,7 +111,7 @@ export function Flights({ setRotation }) {
   }
 
   function fetchMore() {
-    if (offset < 1) return;
+    if (offset - LIMIT_PER_PAGE < 0) return;
     fetch(
       `https://infinite-dawn-93085.herokuapp.com/flights?offset=${offset -
         LIMIT_PER_PAGE}&limit=${LIMIT_PER_PAGE}`
@@ -131,11 +130,10 @@ export function Flights({ setRotation }) {
 
   return (
     <div className="flights" onScroll={handleScroll}>
-      {/* <div style={{ position: "absolute", right: "0" }}>
-        <input ref={searchInput} type="text" placeholder="Type the origin..." />
-        <button onClick={handleSearchSubmit}>search</button>
-      </div> */}
-
+      <h3>Flights</h3>
+      <button className="load-more-btn" onClick={fetchMore}>
+        Load more...
+      </button>
       {flights &&
         sortedFlightsByOrigin(lastSelectedFlightDestination).data.map(
           (flight) => {
@@ -150,9 +148,6 @@ export function Flights({ setRotation }) {
             } = flight;
             return (
               <article
-                style={{
-                  background: origin === DEFAULT_BASE ? "grey" : "orange",
-                }}
                 key={id + Math.random()}
                 onClick={() => setRotation(flight)}
               >
@@ -162,21 +157,13 @@ export function Flights({ setRotation }) {
                   <span>{destination}</span>
                 </div>
                 <div className="times">
-                  <span>
-                    {readable_departure}-{departuretime}
-                  </span>
-                  <span>
-                    {readable_arrival}-{arrivaltime}
-                  </span>
+                  <span>{readable_departure}</span>
+                  <span>{readable_arrival}</span>
                 </div>
               </article>
             );
           }
         )}
-
-      <button style={{ position: "absolute" }} onClick={fetchMore}>
-        Fetch more
-      </button>
     </div>
   );
 }

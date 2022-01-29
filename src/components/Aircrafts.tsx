@@ -10,7 +10,11 @@ interface Aircraft {
 
 type Aircrafts = Aircraft[];
 
-export function Aircrafts() {
+interface AircraftsProps {
+  usagePercentage: string;
+}
+
+export function Aircrafts({ usagePercentage }: AircraftsProps) {
   const [flights, setFlights] = useState<Aircrafts>(null);
 
   useEffect(() => {
@@ -23,9 +27,15 @@ export function Aircrafts() {
 
   return (
     <div className="aircrafts">
+      <h3>Aircrafts</h3>
       {flights &&
         flights.map(({ base, economySeats, ident, type }) => {
-          return <div key={ident}>{type}</div>;
+          return (
+            <article key={ident}>
+              <span>{type}</span>
+              <p>{usagePercentage} %</p>
+            </article>
+          );
         })}
     </div>
   );

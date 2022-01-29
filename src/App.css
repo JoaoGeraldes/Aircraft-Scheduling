@@ -1,38 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
+* {
+  font-family: "Noto Sans", sans-serif;
+}
 .content {
   display: flex;
-  /* display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  grid-template-rows: 1fr;
-  gap: 1vw; */
   width: 100vw;
   height: 100vh;
+  justify-content: center;
+  background: linear-gradient(0deg, rgb(0 0 0) 37%, rgb(253 225 225) 79%);
+}
+* > article {
+  cursor: pointer;
 }
 .rotation {
   display: flex;
-  /* max-height: 100px; */
+  align-items: center;
   flex-direction: column;
-  background-color: #808080;
-  display: flex;
+  background-color: #000000;
   max-height: 80vh;
-  flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
   width: 33vw;
+  opacity: 0.8;
+  border-top: 1px solid #1c1c1c;
+  border-bottom: 1px solid #1c1c1c;
+  color: white;
 }
 .rotation > article {
-  background-color: coral;
+  background-color: #1b1b1b;
   width: 100%;
   margin: 1em;
   text-align: center;
   max-width: 80%;
   padding: 1em;
+  color: white;
+  z-index: 10;
+  border: 1px solid #3b3b3b;
 }
 
 .aircrafts {
-  background-color: rgb(187, 187, 187);
   display: flex;
-  width: 33vw;
+  align-items: center;
+  flex-direction: column;
+  background-color: #000000;
   max-height: 80vh;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 33vw;
+  opacity: 0.8;
+  border: 1px solid #1c1c1c;
+  color: white;
+}
+
+.aircrafts > article {
+  background-color: #1b1b1b;
+  width: 100%;
+  margin: 1em;
+  text-align: center;
+  max-width: 80%;
+  padding: 1em;
+  color: white;
+  z-index: 10;
+  border: 1px solid #3b3b3b;
 }
 
 footer {
@@ -40,36 +70,60 @@ footer {
   position: absolute;
   bottom: 0;
   display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 footer > div {
   display: flex;
   width: 100vw;
-  background: rgb(143, 143, 143);
-  justify-content: center;
+  background: rgb(255, 255, 255);
+  justify-content: flex-start;
   align-items: center;
+}
+footer > .usage {
+  width: 70%;
+  height: 40px;
+  background-color: #000000;
+  display: flex;
+  justify-content: center;
 }
 
 .flights {
-  background-color: blanchedalmond;
-  display: flex;
-  /* max-height: 100px; */
+  background-color: #000000;
   flex-direction: column;
-  background-color: blanchedalmond;
   display: flex;
   max-height: 80vh;
-  flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
   width: 33vw;
+  opacity: 0.8;
+  border: 1px solid #1c1c1c;
+  color: white;
+  align-items: center;
+}
+
+.load-more-btn {
+  position: sticky;
+  top: 0px;
+  width: 100%;
+  background: #e75100;
+  color: white;
+  border: none;
+  font-size: 2em;
+  cursor: pointer;
 }
 
 .flights > article {
-  background-color: coral;
+  background-color: #1b1b1b;
   width: 100%;
   margin: 1em;
   text-align: center;
   max-width: 80%;
   padding: 1em;
+  color: white;
+  border: 1px solid #3b3b3b;
 }
 .flights > article > .base {
   display: flex;
@@ -78,4 +132,64 @@ footer > div {
 .flights > article > .times {
   display: flex;
   justify-content: space-around;
+}
+
+.rotation > article > .base {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+.rotation > article > .times {
+  display: flex;
+  justify-content: space-between;
+}
+
+.usage {
+  border-radius: 1em;
+}
+.usage > .idle {
+  height: 100%;
+  background-color: #1b1b1b;
+}
+.usage > .service {
+  height: 100%;
+  background-color: #00ff0e;
+}
+.usage > .turnaround {
+  height: 100%;
+  background-color: #af00ff;
+}
+
+.time-split {
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  background: none;
+  max-width: 70%;
+}
+
+svg {
+  filter: invert(48%) sepia(179%) saturate(1073%) hue-rotate(357deg)
+    brightness(118%) contrast(119%);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(245, 113, 36);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(255, 94, 0);
 }

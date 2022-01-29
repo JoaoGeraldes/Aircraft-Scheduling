@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useMemo, useContext } from "react";
 import { AppContext } from "../App";
 import { FlightsList } from "./Flights";
+import { AircraftLanding } from "./Icons/AircraftLanding";
+import { AircraftTakeOff } from "./Icons/AircraftTakeOff";
+import { RightArrow } from "./Icons/RightArrow";
 
 // interface Flight {
 //   ident: string;
@@ -26,6 +29,7 @@ export function Rotation({ selectedFlights, removeFlight }: RotationProps) {
   // console.log("Rendered Rotation.tsx");
   return (
     <div className="rotation">
+      <h3>Rotation</h3>
       {selectedFlights &&
         selectedFlights.map(
           (
@@ -48,13 +52,22 @@ export function Rotation({ selectedFlights, removeFlight }: RotationProps) {
               <div className="ident">{id}</div>
               <div className="base">
                 <span>{origin}</span>
-                &nbsp;&nbsp;&nbsp;
+                <span>
+                  <RightArrow />
+                </span>
                 <span>{destination}</span>
               </div>
               <div className="times">
-                <span>{readable_departure}</span>
-                &nbsp;
-                <span>{readable_arrival}</span>
+                <span>
+                  {readable_departure}
+                  &nbsp; &nbsp;
+                  <AircraftTakeOff />
+                </span>
+                <span>
+                  <AircraftLanding />
+                  &nbsp; &nbsp;
+                  {readable_arrival}
+                </span>
               </div>
             </article>
           )
