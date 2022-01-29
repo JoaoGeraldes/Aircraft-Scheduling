@@ -194,48 +194,11 @@ function App() {
           selectedFlights={flightsInRotation}
           removeFlight={handleRemoveFlight}
         />
-        <Flights setRotation={handleAddFlight} />
-        {/* {memoizedFlightsComponent} */}
+        {/* <Flights setRotation={handleAddFlight} /> */}
+        {memoizedFlightsComponent}
       </AppContext.Provider>
       <footer>
         {aircraftUsage && <UsageBar aircraftUsage={aircraftUsage} />}
-        {/* <div className="usage">
-          {aircraftUsage.map((minute) => {
-            if (minute === "idle")
-              return (
-                <div
-                  className="idle"
-                  key={Math.random()}
-                  style={{
-                    width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
-                      100}%`,
-                  }}
-                ></div>
-              );
-            if (minute === "service")
-              return (
-                <div
-                  className="service"
-                  key={Math.random()}
-                  style={{
-                    width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
-                      100}%`,
-                  }}
-                ></div>
-              );
-            if (minute === "turnaround")
-              return (
-                <div
-                  className="turnaround"
-                  key={Math.random()}
-                  style={{
-                    width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
-                      100}%`,
-                  }}
-                ></div>
-              );
-          })}
-        </div> */}
       </footer>
     </div>
   );

@@ -2,6 +2,7 @@ import { off } from "process";
 import React, { useEffect, useState, useMemo, useRef, useContext } from "react";
 import { AppContext } from "../App";
 import { DEFAULT_BASE, LIMIT_PER_PAGE } from "../constants";
+import { Loader } from "./Icons/Loader";
 
 export type FlightsList = Flight[];
 
@@ -29,7 +30,7 @@ export function Flights({ setRotation }) {
   // const [offset, setOffset] = useState(73);
   const [sortByOrigin, setSortByOrigin] = useState(null);
   const Context = useContext(AppContext);
-
+  const loadMoreButton = useRef(null);
   let lastSelectedFlightDestination = DEFAULT_BASE;
   if (Context.rotation.length > 0) {
     lastSelectedFlightDestination =
@@ -112,6 +113,9 @@ export function Flights({ setRotation }) {
 
   function fetchMore() {
     if (offset - LIMIT_PER_PAGE < 0) return;
+    loadMoreButton.current.innerText = "Loading...";
+    loadMoreButton.current.classList.add("disabled");
+    loadMoreButton.current.disabled = true;
     fetch(
       `https://infinite-dawn-93085.herokuapp.com/flights?offset=${offset -
         LIMIT_PER_PAGE}&limit=${LIMIT_PER_PAGE}`
@@ -124,14 +128,26 @@ export function Flights({ setRotation }) {
           data: [...flights.data, ...json.data],
         });
       })
-      .finally(() => setOffset(offset - LIMIT_PER_PAGE));
+      .finally(() => {
+        loadMoreButton.current.innerText = "Load more";
+        loadMoreButton.current.classList.remove("disabled");
+        loadMoreButton.current.disabled = false;
+        setOffset(offset - LIMIT_PER_PAGE);
+      });
   }
-  const searchInput = useRef(null);
+
+  function blah() {
+    console.dir(loadMoreButton.current.innerText);
+  }
 
   return (
     <div className="flights" onScroll={handleScroll}>
       <h3>Flights</h3>
-      <button className="load-more-btn" onClick={fetchMore}>
+      <button
+        ref={loadMoreButton}
+        className="load-more-btn"
+        onClick={fetchMore}
+      >
         Load more...
       </button>
       {flights &&

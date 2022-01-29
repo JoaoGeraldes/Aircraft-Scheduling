@@ -1,5 +1,3 @@
-## Since the API doesn't support filtering (query strings) by origin...
-
 ## Sorting logic
 
 I forced the requests to start at the last offset, because, otherwise we would have to scroll down or fetch more indefinetely.
@@ -9,8 +7,6 @@ Initially I implemented an infinite-scroll (fetch more) to ease the process of f
 
 The Flights list, will be sorted by origin, based on the destination of the last selected flight in rotation.
 e.g.: If the last selected flight in rotation has a destination of EGKK, then, the list will show origins starting at EGKK.
-
-⚠ It could be optimized to consume less CPU on calculations
 
 ## Load more data
 
