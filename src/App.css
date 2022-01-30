@@ -118,10 +118,10 @@ footer > .usage {
 
 .disabled {
   background: #000000;
-  color: #23232300;
-  background-image: url(/static/media/loader.54e3ec59.svg);
+  color: #ffffff;
+  /* background-image: url(/src/assets/loader.svg);
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center; */
   border-radius: 0;
 }
 

@@ -136,12 +136,8 @@ export function Flights({ setRotation }) {
       });
   }
 
-  function blah() {
-    console.dir(loadMoreButton.current.innerText);
-  }
-
   return (
-    <div className="flights" onScroll={handleScroll}>
+    <div className="flights">
       <h3>Flights</h3>
       <button
         ref={loadMoreButton}
