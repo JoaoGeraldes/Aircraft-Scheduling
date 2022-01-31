@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { AircraftStatus } from "../App";
 
 interface UsageBarProps {
@@ -53,39 +53,6 @@ export function UsageBar({ aircraftUsage }: UsageBarProps) {
       <div className="usage">
         {aircraftUsage.map((status, index) => {
           return getAircraftStatusDiv(status, index + 1, status + index);
-          // if (minute === "idle")
-          //   return (
-          //     <div
-          //       className="idle"
-          //       key={Math.random()}
-          //       style={{
-          //         width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
-          //           100}%`,
-          //       }}
-          //     ></div>
-          //   );
-          // if (minute === "service")
-          //   return (
-          //     <div
-          //       className="service"
-          //       key={Math.random()}
-          //       style={{
-          //         width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
-          //           100}%`,
-          //       }}
-          //     ></div>
-          //   );
-          // if (minute === "turnaround")
-          //   return (
-          //     <div
-          //       className="turnaround"
-          //       key={Math.random()}
-          //       style={{
-          //         width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
-          //           100}%`,
-          //       }}
-          //     ></div>
-          //   );
         })}
       </div>
     </>

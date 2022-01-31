@@ -81,7 +81,7 @@ export function Flights({ setRotation }) {
     loadMoreButton.current.classList.add("disabled");
     loadMoreButton.current.disabled = true;
     fetch(
-      `${process.env.REACT_APP_AIRCRAFTS_URI}?offset=${offset -
+      `${process.env.REACT_APP_FLIGHTS_URI}?offset=${offset -
         LIMIT_PER_PAGE}&limit=${LIMIT_PER_PAGE}`
     )
       .then((response) => response.json())
