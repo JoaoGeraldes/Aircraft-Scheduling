@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { AircraftStatus } from "../App";
 
 interface UsageBarProps {
@@ -6,6 +6,41 @@ interface UsageBarProps {
 }
 
 export function UsageBar({ aircraftUsage }: UsageBarProps) {
+  function getReadableTimeFromMinutes(min: number): string {
+    var num = min;
+    var hours = num / 60;
+    var rhours = Math.floor(hours);
+    var minutes = (hours - rhours) * 60;
+    var rminutes = Math.round(minutes);
+    console.log("RRRRR");
+    return rhours + ":" + rminutes;
+  }
+
+  function getAircraftStatusDiv(
+    status: AircraftStatus,
+    minute: number,
+    key: number | string
+  ) {
+    const DEFAULT_WIDTH = `${Math.round((0.0694444 + Number.EPSILON) * 100) /
+      100}%`;
+
+    const STYLE = { width: DEFAULT_WIDTH };
+
+    const memoizedGetReadableTimeFromMinutes = useMemo(
+      () => getReadableTimeFromMinutes(minute),
+      []
+    );
+
+    return (
+      <div className={`${status} tooltip`} key={key} style={STYLE}>
+        <p className="tooltip--bottom" data-tooltip="Time"></p>
+        <span className="tooltiptext">
+          {memoizedGetReadableTimeFromMinutes}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="time-split">
@@ -16,40 +51,41 @@ export function UsageBar({ aircraftUsage }: UsageBarProps) {
         <span>24:00</span>
       </div>
       <div className="usage">
-        {aircraftUsage.map((minute) => {
-          if (minute === "idle")
-            return (
-              <div
-                className="idle"
-                key={Math.random()}
-                style={{
-                  width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
-                    100}%`,
-                }}
-              ></div>
-            );
-          if (minute === "service")
-            return (
-              <div
-                className="service"
-                key={Math.random()}
-                style={{
-                  width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
-                    100}%`,
-                }}
-              ></div>
-            );
-          if (minute === "turnaround")
-            return (
-              <div
-                className="turnaround"
-                key={Math.random()}
-                style={{
-                  width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
-                    100}%`,
-                }}
-              ></div>
-            );
+        {aircraftUsage.map((status, index) => {
+          return getAircraftStatusDiv(status, index + 1, status + index);
+          // if (minute === "idle")
+          //   return (
+          //     <div
+          //       className="idle"
+          //       key={Math.random()}
+          //       style={{
+          //         width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
+          //           100}%`,
+          //       }}
+          //     ></div>
+          //   );
+          // if (minute === "service")
+          //   return (
+          //     <div
+          //       className="service"
+          //       key={Math.random()}
+          //       style={{
+          //         width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
+          //           100}%`,
+          //       }}
+          //     ></div>
+          //   );
+          // if (minute === "turnaround")
+          //   return (
+          //     <div
+          //       className="turnaround"
+          //       key={Math.random()}
+          //       style={{
+          //         width: `${Math.round((0.0694444 + Number.EPSILON) * 100) /
+          //           100}%`,
+          //       }}
+          //     ></div>
+          //   );
         })}
       </div>
     </>

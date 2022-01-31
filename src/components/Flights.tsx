@@ -1,15 +1,6 @@
-import { off } from "process";
-import React, { useEffect, useState, useMemo, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { AppContext } from "../App";
 import { DEFAULT_BASE, LIMIT_PER_PAGE } from "../constants";
-import { Loader } from "./Icons/Loader";
-
-export type FlightsList = Flight[];
-
-export interface Data {
-  data: FlightsList;
-  pagination: { offset: string; limit: number; total: string };
-}
 
 export interface Flight {
   id: string;
@@ -21,14 +12,17 @@ export interface Flight {
   destination: string;
 }
 
-// const FLIGHTS_URL = "json/flights.json"
-const FLIGHTS_URL = `https://infinite-dawn-93085.herokuapp.com/flights?offset=1323&limit=${LIMIT_PER_PAGE}`;
+export type FlightsList = Flight[];
+export interface Data {
+  data: FlightsList;
+  pagination: { offset: string; limit: number; total: string };
+}
+
+const FLIGHTS_URL = `${process.env.REACT_APP_FLIGHTS_URI}?offset=1323&limit=${LIMIT_PER_PAGE}`;
 
 export function Flights({ setRotation }) {
   const [flights, setFlights] = useState<Data>(null);
   const [offset, setOffset] = useState(1323);
-  // const [offset, setOffset] = useState(73);
-  const [sortByOrigin, setSortByOrigin] = useState(null);
   const Context = useContext(AppContext);
   const loadMoreButton = useRef(null);
   let lastSelectedFlightDestination = DEFAULT_BASE;
@@ -38,28 +32,18 @@ export function Flights({ setRotation }) {
   }
 
   useEffect(() => {
-    // document.querySelector(".flights").addEventListener("scroll", () => {
-    //   const divFlights = document.querySelector(".flights") as HTMLElement;
-    //   if (
-    //     divFlights.scrollHeight - divFlights.scrollTop <=
-    //     divFlights.offsetHeight
-    //   ) {
-    //     fetchMore();
-    //     console.log("FETCH!!");
-    //   }
-    // });
     getFlights();
   }, []);
 
-  function handleScroll() {
-    const divFlights = document.querySelector(".flights") as HTMLElement;
-    if (
-      divFlights.scrollHeight - divFlights.scrollTop <=
-      divFlights.offsetHeight
-    ) {
-      fetchMore();
-    }
-  }
+  // function handleScroll() {
+  //   const divFlights = document.querySelector(".flights") as HTMLElement;
+  //   if (
+  //     divFlights.scrollHeight - divFlights.scrollTop <=
+  //     divFlights.offsetHeight
+  //   ) {
+  //     fetchMore();
+  //   }
+  // }
 
   // const memoizedSortedFlights = useMemo(() => {
   //   console.log("sorting");
@@ -67,31 +51,18 @@ export function Flights({ setRotation }) {
   // }, [flights]);
 
   function sortedFlightsByOrigin(_origin?: string) {
-    // function compareDeparture(a: Flight, b: Flight) {
-    //   return a.arrivaltime - b.arrivaltime;
-    // }
-    // return flights.sort(compareDeparture);
     // sort by name
     flights.data.sort(function(a, b) {
-      var nameA = a.origin.toUpperCase(); // ignore upper and lowercase
-      var nameB = b.origin.toUpperCase(); // ignore upper and lowercase
-      if (nameA < nameB) {
-        // 2 < 1 false
-        return -1;
-      }
-      if (nameA > nameB) {
-        // 2 > 1 true ---> 1, 2
-        return 1;
-      }
-
-      // names must be equal
+      var nameA = a.origin.toUpperCase();
+      var nameB = b.origin.toUpperCase();
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
       return 0;
     });
 
     const priorityFlights = flights.data.filter(
       (_flight) => _flight.origin === _origin
     );
-
     return { ...flights, data: priorityFlights };
   }
 
@@ -104,20 +75,13 @@ export function Flights({ setRotation }) {
       });
   }
 
-  function handleSearchSubmit() {
-    sortedFlightsByOrigin(
-      Context.rotation[Context.rotation.length - 1].destination
-    );
-    // console.dir(searchInput.current.value);
-  }
-
   function fetchMore() {
     if (offset - LIMIT_PER_PAGE < 0) return;
     loadMoreButton.current.innerText = "Loading...";
     loadMoreButton.current.classList.add("disabled");
     loadMoreButton.current.disabled = true;
     fetch(
-      `https://infinite-dawn-93085.herokuapp.com/flights?offset=${offset -
+      `${process.env.REACT_APP_AIRCRAFTS_URI}?offset=${offset -
         LIMIT_PER_PAGE}&limit=${LIMIT_PER_PAGE}`
     )
       .then((response) => response.json())
@@ -150,10 +114,8 @@ export function Flights({ setRotation }) {
         sortedFlightsByOrigin(lastSelectedFlightDestination).data.map(
           (flight) => {
             const {
-              arrivaltime,
               destination,
               id,
-              departuretime,
               origin,
               readable_departure,
               readable_arrival,

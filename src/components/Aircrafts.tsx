@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../App";
+import React, { useEffect, useState } from "react";
 
 interface Aircraft {
   ident: string;
@@ -8,28 +7,32 @@ interface Aircraft {
   base: string;
 }
 
-type Aircrafts = Aircraft[];
-
 interface AircraftsProps {
   usagePercentage: string;
 }
 
+type AircraftsType = Aircraft[];
+interface Data {
+  data: AircraftsType;
+  pagination: { offset: string; limit: number; total: string };
+}
+
 export function Aircrafts({ usagePercentage }: AircraftsProps) {
-  const [flights, setFlights] = useState<Aircrafts>(null);
+  const [aircraft, setAircraft] = useState<AircraftsType>(null);
 
   useEffect(() => {
-    fetch("json/aircrafts.json")
+    fetch(process.env.REACT_APP_AIRCRAFTS_URI)
       .then((response) => response.json())
-      .then((json) => {
-        setFlights(json);
+      .then((json: Data) => {
+        setAircraft(json.data);
       });
   }, []);
 
   return (
     <div className="aircrafts">
       <h3>Aircrafts</h3>
-      {flights &&
-        flights.map(({ base, economySeats, ident, type }) => {
+      {aircraft &&
+        aircraft.map(({ ident, type }) => {
           return (
             <article key={ident}>
               <span>{type}</span>

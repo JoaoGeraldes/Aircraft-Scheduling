@@ -33,19 +33,13 @@ const contextDefaultValue: AppContext = {
   airplanes: [],
 };
 
-// const FULL_DAY_IN_MINUTES = 1440;
-// const TURNAROUND_IN_MINUTES = 20;
-// const DEFAULT_BASE = "EGKK";
-
 export type AircraftStatus = "turnaround" | "service" | "idle";
 
 export const AppContext = createContext<AppContext | null>(null);
 
 // https://gist.github.com/nickbnf/77dcd76a26c57fa0d005187b6808799e
-
 function App() {
   const [flightsInRotation, setFlightsInRotation] = useState<FlightsList>([]);
-  // const [rotation, setRotation] = useState([]);
   const [aircraftUsage, setAircraftUsage] = useState<AircraftStatus[]>(
     Array(1440).fill("idle")
   );
@@ -55,9 +49,7 @@ function App() {
     _arrivaltime: number,
     _aircraftUsage: AircraftStatus[]
   ) {
-    // console.log({ _aircraftUsage, _departuretime, _arrivaltime });
     if (_departuretime <= _arrivaltime) {
-      // console.log("here", _aircraftUsage[_departuretime]);
       if (_aircraftUsage[_departuretime] !== "idle") return true;
       else
         return isAirplaneBusy(_departuretime + 1, _arrivaltime, _aircraftUsage);
@@ -107,7 +99,6 @@ function App() {
     // Sort the flights in rotation by departure time - ascending (top to bottom)
     function compareDeparture(a: Flight, b: Flight) {
       if (a.origin !== b.destination) {
-        console.log("Conflict ID:", a.id);
         incompatibleFlightID = a.id;
       }
       return a.arrivaltime - b.arrivaltime;
@@ -139,8 +130,6 @@ function App() {
       else clonedAircraftUsage[i] = "service";
     }
 
-    console.log("I got to set state!");
-    console.log("conflicted", incompatibleFlightID);
     setAircraftUsage(clonedAircraftUsage);
 
     setFlightsInRotation(sortedFlightsInRotation);
@@ -183,7 +172,6 @@ function App() {
     [handleAddFlight, flightsInRotation]
   );
 
-  console.log("Flights", flightsInRotation);
   return (
     <div className="content">
       <AppContext.Provider
@@ -194,7 +182,6 @@ function App() {
           selectedFlights={flightsInRotation}
           removeFlight={handleRemoveFlight}
         />
-        {/* <Flights setRotation={handleAddFlight} /> */}
         {memoizedFlightsComponent}
       </AppContext.Provider>
       <footer>
