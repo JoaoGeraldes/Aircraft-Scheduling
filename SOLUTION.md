@@ -8,11 +8,8 @@ Initially I implemented an infinite-scroll (fetch more) to ease the process of f
 The Flights list, will be sorted by origin, based on the destination of the last selected flight in rotation.
 e.g.: If the last selected flight in rotation has a destination of EGKK, then, the list will show origins starting at EGKK.
 
-## Load more data
-
-To fetch more flights, scroll down (when scroll is available) or click on the 'Load more' button.
-
 ## Final notes
 
 Some environment variables were set on .env file in the root directory.
 I added some @types and TypeScript to the project (as dev dependencies) to facilitate typing and avoid errors.
+I've used node v14.0.0 for this project.
