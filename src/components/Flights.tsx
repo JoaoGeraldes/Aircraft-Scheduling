@@ -66,20 +66,32 @@ export function Flights({ setRotation }) {
     return { ...flights, data: priorityFlights };
   }
 
+  function isLoading(_isLoading: boolean) {
+    if (_isLoading) {
+      loadMoreButton.current.innerText = "Loading...";
+      loadMoreButton.current.classList.add("disabled");
+      loadMoreButton.current.disabled = true;
+    } else {
+      loadMoreButton.current.innerText = "Load more";
+      loadMoreButton.current.classList.remove("disabled");
+      loadMoreButton.current.disabled = false;
+    }
+  }
+
   function getFlights() {
+    isLoading(true);
     fetch(FLIGHTS_URL)
       .then((response) => response.json())
       .then((json) => {
         setFlights(json);
         Context.flights = json;
-      });
+      })
+      .finally(() => isLoading(false));
   }
 
   function fetchMore() {
     if (offset - LIMIT_PER_PAGE < 0) return;
-    loadMoreButton.current.innerText = "Loading...";
-    loadMoreButton.current.classList.add("disabled");
-    loadMoreButton.current.disabled = true;
+    isLoading(true);
     fetch(
       `${process.env.REACT_APP_FLIGHTS_URI}?offset=${offset -
         LIMIT_PER_PAGE}&limit=${LIMIT_PER_PAGE}`
@@ -93,9 +105,7 @@ export function Flights({ setRotation }) {
         });
       })
       .finally(() => {
-        loadMoreButton.current.innerText = "Load more";
-        loadMoreButton.current.classList.remove("disabled");
-        loadMoreButton.current.disabled = false;
+        isLoading(false);
         setOffset(offset - LIMIT_PER_PAGE);
       });
   }

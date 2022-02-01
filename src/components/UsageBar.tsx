@@ -12,7 +12,6 @@ export function UsageBar({ aircraftUsage }: UsageBarProps) {
     var rhours = Math.floor(hours);
     var minutes = (hours - rhours) * 60;
     var rminutes = Math.round(minutes);
-    console.log("RRRRR");
     return rhours + ":" + rminutes;
   }
 
