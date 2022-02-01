@@ -13,3 +13,6 @@ e.g.: If the last selected flight in rotation has a destination of EGKK, then, t
 To fetch more flights, scroll down (when scroll is available) or click on the 'Load more' button.
 
 ## Final notes
+
+Some environment variables were set on .env file in the root directory.
+I added some @types and TypeScript to the project (as dev dependencies) to facilitate typing and avoid errors.
